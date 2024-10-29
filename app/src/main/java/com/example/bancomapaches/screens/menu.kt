@@ -21,11 +21,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
@@ -114,12 +119,22 @@ fun secondbodyContent(navController:NavController, pading:Modifier){
                         .padding(start = 30.dp) // Espaciado a la derecha
                 )
             }
-            Text("Colonia Tercera Calle 696, Villa\nChica",fontSize = 20.sp, color = Color(0xFFB8860B), textAlign = TextAlign.Center)
-            Button(onClick = {
-                navController.navigate(AppScreens.GreetingCard.route)
-            }) {
-                Text("Confirmar asistencia")
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically){
+                Text("Colonia Tercera Calle \n696, Villa Chica",fontSize = 15.sp, color = Color(0xFFB8860B), textAlign = TextAlign.Center)
+                Button(onClick = {
+                },
+                    modifier = Modifier.padding(start = 20.dp)
+                ) {
+                    Text("Asistiré", fontSize = 10.sp)
+                }
             }
+            bottomNav(Modifier.fillMaxWidth().background(Color(35, 31, 64)),onClickHome = {
+                navController.navigate(AppScreens.GreetingCard.route)
+            },onClickBill = {
+                navController.navigate(AppScreens.Bill.route)
+            }, cardActive = false)
         }
     }
 }
@@ -259,11 +274,18 @@ fun mySecondPreview(){
                             .padding(start = 30.dp) // Espaciado a la derecha
                     )
                 }
-                Text("Colonia Tercera Calle 696, Villa\nChica",fontSize = 20.sp, color = Color(0xFFB8860B), textAlign = TextAlign.Center)
-                Button(onClick = {
-                }) {
-                    Text("Confirmar asistencia")
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically){
+                    Text("Colonia Tercera Calle \n696, Villa Chica",fontSize = 15.sp, color = Color(0xFFB8860B), textAlign = TextAlign.Center)
+                    Button(onClick = {
+                    },
+                        modifier = Modifier.padding(start = 20.dp)
+                        ) {
+                        Text("Asistiré", fontSize = 10.sp)
+                    }
                 }
+                bottomNav(Modifier.fillMaxWidth().background(Color(35, 31, 64)), cardActive = false)
             }
     }
 }

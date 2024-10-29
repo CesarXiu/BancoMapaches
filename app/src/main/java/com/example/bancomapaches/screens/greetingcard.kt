@@ -62,7 +62,9 @@ fun bodyContent(navController:NavController, paddingValues:Modifier){
         Spacer(modifier = Modifier.weight(1f))
         bottomNav(Modifier.fillMaxWidth().padding(bottom = 50.dp).background(Color(35, 31, 64)), onClickCard = {
             navController.navigate(AppScreens.Menu.route)
-        })
+        },onClickBill = {
+            navController.navigate(AppScreens.Bill.route)
+        }, homeActive = false)
     }
 }
 
@@ -170,14 +172,21 @@ fun pill(text:String, modifier: Modifier = Modifier, onClick: (() -> Unit)? = nu
 
 
 @Composable
-fun bottomNav(modifier: Modifier = Modifier, onClickCard: (() -> Unit)? = null,onClickBill: (() -> Unit)? = null){
+fun bottomNav(modifier: Modifier = Modifier,
+              onClickCard: (() -> Unit)? = null,
+              onClickBill: (() -> Unit)? = null,
+              onClickHome: (() -> Unit)? = null,
+              cardActive: Boolean = true,
+              homeActive: Boolean = true,
+              billActive: Boolean = true,){
     Row(modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
         ){
-        pill("CARD", onClick = onClickCard)
-        pill("HOME", colorx = Color(88, 121, 161))
-        pill("BILL", onClick = onClickBill)
+        //colorx = Color(88, 121, 161)
+        pill("CARD", onClick = onClickCard, colorx = (if(!cardActive) Color(88, 121, 161) else Color(96,167,255,255)))
+        pill("HOME", onClick = onClickHome, colorx = (if(!homeActive) Color(88, 121, 161) else Color(96,167,255,255)))
+        pill("BILL", onClick = onClickBill, colorx = (if(!billActive) Color(88, 121, 161) else Color(96,167,255,255)))
     }
 }
 
@@ -194,6 +203,6 @@ fun myPreview(){
         socials(modifier = Modifier.padding( end = 30.dp).width(30.dp).height(30.dp).clip(shape = CircleShape))
         contact(modifier = Modifier.padding( end = 5.dp).width(30.dp).height(30.dp).clip(shape = CircleShape))
         Spacer(modifier = Modifier.weight(1f))
-        bottomNav(Modifier.fillMaxWidth().padding(bottom = 50.dp).background(Color(35, 31, 64)))
+        bottomNav(Modifier.fillMaxWidth().padding(bottom = 50.dp).background(Color(35, 31, 64)), homeActive = false)
     }
 }
