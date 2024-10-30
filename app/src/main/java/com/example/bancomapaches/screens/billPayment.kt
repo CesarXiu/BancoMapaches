@@ -1,5 +1,6 @@
 package com.example.bancomapaches.screens
 
+import android.graphics.drawable.Icon
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +35,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bancomapaches.navigation.AppScreens
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -56,16 +60,24 @@ fun billPayment(navController: NavController){
 }
 @Composable
 fun bodyContentBillPayment(navController:NavController, paddingValues:Modifier){
+    var amountInput = remember {mutableStateOf("0")}
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(59,99,142)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(59, 99, 142)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         paymentHeader()
-        totalAmount()
+        totalAmount(amountInput = amountInput)
         tip()
+        total(total = amountInput)
         Spacer(modifier = Modifier.weight(1f))
-        bottomNav(Modifier.fillMaxWidth().padding(bottom = 50.dp).background(Color(35, 31, 64)), billActive = false,
+        bottomNav(
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp)
+                .background(Color(35, 31, 64)), billActive = false,
             onClickHome = {
                 navController.navigate(AppScreens.GreetingCard.route)
             },
@@ -76,19 +88,24 @@ fun bodyContentBillPayment(navController:NavController, paddingValues:Modifier){
 }
 @Composable
 fun paymentHeader(){
-    Box(modifier = Modifier.background(Color(35, 31, 64)).fillMaxWidth().height(90.dp)){
+    Box(modifier = Modifier
+        .background(Color(35, 31, 64))
+        .fillMaxWidth()
+        .height(90.dp)){
         Text("\$ Bill Payment \$", color = Color.White, fontSize = 50.sp, modifier = Modifier.padding(15.dp))
     }
 }
 @Composable
-fun totalAmount(modifier:Modifier = Modifier){
-    var amountInput by remember {mutableStateOf("0")}
+fun totalAmount(modifier:Modifier = Modifier, amountInput: MutableState<String>){
+    var amountInputInt by remember {mutableStateOf("")}
     Text("Total Amount", color = Color.White, fontSize = 30.sp, textAlign = TextAlign.Center, modifier = Modifier.padding(15.dp))
     TextField(
-        value = amountInput,
+        value = amountInputInt,
         onValueChange = {
             if (it.isEmpty() || it.matches(Regex("^\\d*\\.?\\d*\$"))) {
-                amountInput = it
+                amountInputInt = it
+                val auxiliar = if (it.isNotEmpty()) it.toDouble() * 1.16 else 0.0
+                amountInput.value = auxiliar.toString()
             }
         },
         modifier = modifier,
@@ -96,24 +113,45 @@ fun totalAmount(modifier:Modifier = Modifier){
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
     Text("16% IVA",color = Color.White, fontSize = 20.sp)
-    Text("YOUR PAYING: \$${amountInput} USD",color = Color.White, fontSize = 20.sp)
+    Text("YOUR PAYING: \$${amountInput.value} USD",color = Color.White, fontSize = 20.sp)
 }
+@Composable
+fun checked(){
+    val iconChecked = Icons.Outlined.Favorite
+    val colorChecked = Color.Red
+    Icon(
+        imageVector = iconChecked,
+        contentDescription = null,
+        tint = colorChecked
+    )
+}
+@Composable
+fun notChecked(){
+    val iconNotChecked = Icons.Outlined.FavoriteBorder
+    val colorNotChecked = Color.Gray
+    Icon(
+        iconNotChecked,
+        contentDescription = null,
+        tint = colorNotChecked
+    )
+}
+
 @Composable
 fun DropDownMenu() {
     var expanded by remember { mutableStateOf(false) }
     val contextForToast = LocalContext.current.applicationContext
-    val iconChecked = Icons.Outlined.Favorite
-    val iconNotChecked = Icons.Outlined.FavoriteBorder
-    val colorChecked = Color.Red
-    val colorNotChecked = Color.Gray
+
+    var porcentaje15:Boolean = true
+    var porcentaje10:Boolean = false
+    var porcentaje20:Boolean = false
 
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.
-            fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .wrapContentSize(align = Alignment.TopEnd),
             contentAlignment = Alignment.Center,
 
@@ -132,7 +170,9 @@ fun DropDownMenu() {
                     Icon(
                         Icons.Default.ArrowDropDown,
                         contentDescription = "Open Menu",
-                        modifier = Modifier.size(80.dp).wrapContentSize(align = Alignment.CenterStart),
+                        modifier = Modifier
+                            .size(80.dp)
+                            .wrapContentSize(align = Alignment.CenterStart),
                     )
                 }
                 //Text("%", color = Color.White, fontSize = 40.sp)
@@ -148,14 +188,9 @@ fun DropDownMenu() {
                     onClick = {
                         //Toast.makeText(contextForToast, "¡Suscrito😎!", Toast.LENGTH_SHORT).show()
                         expanded = false
+                        porcentaje10 = !porcentaje10
                     },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.FavoriteBorder,
-                            contentDescription = null,
-                            tint = androidx.compose.ui.graphics.Color.Gray
-                        )
-                    }
+                    leadingIcon =  { if (porcentaje10) checked() else notChecked() }
                 )
 
                 DropdownMenuItem(
@@ -165,14 +200,9 @@ fun DropDownMenu() {
                     onClick = {
                         //Toast.makeText(contextForToast, "Suscribir🙏", Toast.LENGTH_SHORT).show()
                         expanded = false
+                        porcentaje15= !porcentaje15
                     },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Favorite,
-                            contentDescription = null,
-                            tint = androidx.compose.ui.graphics.Color.Red
-                        )
-                    }
+                    leadingIcon =  { if (porcentaje15) checked() else notChecked() }
                 )
 
                 DropdownMenuItem(
@@ -183,14 +213,9 @@ fun DropDownMenu() {
                         /*Toast.makeText(contextForToast, "JetpackCompose.pro", Toast.LENGTH_SHORT)
                             .show()*/
                         expanded = false
+                        porcentaje20 = !porcentaje20
                     },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.FavoriteBorder,
-                            contentDescription = null,
-                            tint = androidx.compose.ui.graphics.Color.DarkGray
-                        )
-                    }
+                    leadingIcon =  { if (porcentaje20) checked() else notChecked() }
                 )
             }
         }
@@ -205,7 +230,9 @@ fun tipAmount(){
         horizontalAlignment = Alignment.CenterHorizontally){
         Text("Tip Amount", color = Color.White, fontSize = 30.sp, textAlign = TextAlign.Center, modifier = Modifier.padding(15.dp))
         Row(
-            modifier = Modifier.wrapContentSize(align = Alignment.CenterEnd).padding(bottom = 15.dp, start = 50.dp),
+            modifier = Modifier
+                .wrapContentSize(align = Alignment.CenterEnd)
+                .padding(bottom = 15.dp, start = 50.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -248,19 +275,58 @@ fun tip(modifier: Modifier = Modifier){
         tipAmount()
     }
 }
+@Composable
+fun total(modifier:Modifier = Modifier, total: MutableState<String>){
+    var checked by remember { mutableStateOf(true) }
+    var final by remember { mutableStateOf("0") }
+
+    LaunchedEffect(total.value) {
+        final = if (checked) {
+            total.value.toDouble().roundToInt().let { if (it < total.value.toDouble()) it + 1 else it }.toString()
+        } else {
+            total.value
+        }
+    }
+    //final = total.value
+    Row(modifier = Modifier.padding(top = 15.dp, bottom = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Text("¿Te gustaria redondear tu pago?", color = Color.White, fontSize = 20.sp, modifier = Modifier.padding(end = 15.dp))
+        Switch(
+            checked = checked,
+            onCheckedChange = {
+                checked = it
+                final = if (checked) {
+                    total.value.toDouble().roundToInt().let { if (it < total.value.toDouble()) it + 1 else it }.toString()
+                } else {
+                    total.value
+                }
+            }
+        )
+    }
+    Text("YOUR PAYING: \$$final USD",color = Color.White, fontSize = 30.sp)
+}
 
 @Preview(showSystemUi=true)
 @Composable
 fun myPreviewBill(){
+    var amountInput = remember {mutableStateOf("0")}
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(59,99,142)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(59, 99, 142)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         paymentHeader()
-        totalAmount()
+        totalAmount(amountInput = amountInput)
         tip()
+        total(total = amountInput)
         Spacer(modifier = Modifier.weight(1f))
-        bottomNav(Modifier.fillMaxWidth().padding(bottom = 50.dp).background(Color(35, 31, 64)), billActive = false)
+        bottomNav(
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp)
+                .background(Color(35, 31, 64)), billActive = false)
     }
 }
