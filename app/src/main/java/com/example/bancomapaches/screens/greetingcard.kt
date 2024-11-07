@@ -64,7 +64,10 @@ fun bodyContent(navController:NavController, paddingValues:Modifier){
             navController.navigate(AppScreens.Menu.route)
         },onClickBill = {
             navController.navigate(AppScreens.Bill.route)
-        }, homeActive = false)
+        }, homeActive = false,
+            onClickCalc = {
+                navController.navigate(AppScreens.calculadora.route)
+            })
     }
 }
 
@@ -176,9 +179,11 @@ fun bottomNav(modifier: Modifier = Modifier,
               onClickCard: (() -> Unit)? = null,
               onClickBill: (() -> Unit)? = null,
               onClickHome: (() -> Unit)? = null,
+              onClickCalc: (() -> Unit)? = null,
               cardActive: Boolean = true,
               homeActive: Boolean = true,
-              billActive: Boolean = true,){
+              billActive: Boolean = true,
+              calcActive: Boolean = true,){
     Row(modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -187,6 +192,7 @@ fun bottomNav(modifier: Modifier = Modifier,
         pill("CARD", onClick = onClickCard, colorx = (if(!cardActive) Color(88, 121, 161) else Color(96,167,255,255)))
         pill("HOME", onClick = onClickHome, colorx = (if(!homeActive) Color(88, 121, 161) else Color(96,167,255,255)))
         pill("BILL", onClick = onClickBill, colorx = (if(!billActive) Color(88, 121, 161) else Color(96,167,255,255)))
+        pill("CALC", onClick = onClickCalc, colorx = (if(!billActive) Color(88, 121, 161) else Color(96,167,255,255)))
     }
 }
 

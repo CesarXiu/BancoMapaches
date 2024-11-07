@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.bancomapaches.screens.Menu
 import com.example.bancomapaches.screens.billPayment
+import com.example.bancomapaches.screens.calculadora
 import com.example.bancomapaches.screens.greetingCard
 
 @Composable
@@ -20,6 +21,9 @@ fun AppNavigation(){
         }
         composable(route = AppScreens.Bill.route){
             billPayment(navController)
+        }
+        composable(route = AppScreens.calculadora.route){
+            calculadora(navController)
         }
     }
 }
